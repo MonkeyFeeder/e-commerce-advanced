@@ -3,7 +3,7 @@ import React from 'react';
 import FormInput from './../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-button.component';
 
-import { signInWithGoogle } from '../../firebase/firebase.utils';
+import { signInWithGoogle, auth } from '../../firebase/firebase.utils';
 
 import './sign-in.styles.scss';
 
@@ -17,15 +17,28 @@ class SignIn extends React.Component {
     }
   }
 
-  handleSubmit = event => {
+  handleSubmit = async event => {
     event.preventDefault();
+
+    const { email, password } = this.state;
+
+    try {
+      // On connecte le user avec un email et un password
+      await auth.signInWithEmailAndPassword(email, password);
+      this.setState({
+        email: '',
+        password: ''
+      })
+    } catch(error) {
+      console.log(error);
+    }
 
     this.setState({ email: '', password: '' })
   }
 
   handleChange = event => {
     // On récupère value et name pour modifier dynamiquement le state. Si le name est "email", il modifiera le state.email et lui attribuera la valeur de l'Input. Pareil pour Password.
-    const { value, name } = event;
+    const { value, name } = event.target;
 
     this.setState({ [name]: value })
   }
@@ -47,7 +60,7 @@ class SignIn extends React.Component {
           <FormInput 
             name="password" 
             type="password" 
-            value={this.state.email} 
+            value={this.state.password} 
             onChange={this.handleChange}
             label="password"
             required />
