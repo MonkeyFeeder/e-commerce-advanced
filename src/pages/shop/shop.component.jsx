@@ -26,12 +26,30 @@ class ShopPage extends React.Component {
     const { updateCollections } = this.props;
     const collectionRef = firestore.collection('collections');
 
+    // This is the observer/observable pattern
+
     // onSnapshot detects when the code is run for the first time or state is updated, and sends a snapshot of the collection
-    this.unsubscribeFromSnapshot = collectionRef.onSnapshot(async snapshot => {
+    // this.unsubscribeFromSnapshot = collectionRef.onSnapshot(async snapshot => {
+    //   const collectionMap = convertCollectionsSnapshotToMap(snapshot);
+    //   updateCollections(collectionMap);
+    //   this.setState({loading: false});
+    // })
+
+
+    // Here's the same thing with Promises
+    collectionRef.get().then(snapshot => {
       const collectionMap = convertCollectionsSnapshotToMap(snapshot);
       updateCollections(collectionMap);
       this.setState({loading: false});
     })
+
+
+    // Now the same thing with fetch ( but not practical for firestore )
+
+    // fetch(`https://firestore.googleapis.com/v1/projects/tacosburritoflamandrose/databases/(default)/documents/collections`)
+    // .then(response => response.json())
+    // .then(data => console.log(data));
+
   }
 
   render() {
